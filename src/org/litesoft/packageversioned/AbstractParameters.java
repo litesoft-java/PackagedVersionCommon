@@ -24,7 +24,7 @@ import java.util.*;
  * - - - (where the "versioned" "target" dirs will live) normally provided by a SystemProperty("LocalVerDir") but defaulting to "../versioned".
  * <p/>
  * if each Argument key starts w/ a unique letter, the 'permutations' option is active.
- * Any non-keyed values are applied in the order above (excess keyed entries are noted, excess non-keyed entries are an Error)
+ * Any non-keyed values are applied in the appropriate order (excess keyed entries are noted, excess non-keyed entries are an Error)
  */
 public abstract class AbstractParameters {
 
