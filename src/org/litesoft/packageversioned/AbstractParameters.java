@@ -15,9 +15,13 @@ import java.util.*;
  * <p/>
  * Some of the supported Arguments are (Keys for the Arguments):
  * - Target ("Target") e.g. "jre"
+ * - DeploymentGroup ("DeploymentGroup") e.g. "Alpha"
+ * - - - if there is no keyed reference AND no default from a file (depends on the App), THEN a non-Keyed will be expected.
  * - Version ("Version"), &
- * - Bucket ("BucketURL") - Bucket URL to interact with - if there is no keyed reference AND no SystemProperty("BucketURL"), THEN a non-Keyed will be expected.
- * - LocalVerDir ("LocalVerDir") - (where the "versioned" "target" dirs will live) normally provided by a SystemProperty("LocalVerDir") but defaulting to ".
+ * - Bucket ("BucketURL")
+ * - - - Bucket URL to interact with - if there is no keyed reference AND no SystemProperty("BucketURL"), THEN a non-Keyed will be expected.
+ * - LocalVerDir ("LocalVerDir")
+ * - - - (where the "versioned" "target" dirs will live) normally provided by a SystemProperty("LocalVerDir") but defaulting to ".
  * ./versioned".
  * <p/>
  * if each Argument key starts w/ a unique letter, the 'permutations' option is active.
@@ -26,17 +30,23 @@ import java.util.*;
 public abstract class AbstractParameters {
 
     public static final String TARGET = "Target";
+    public static final String DEPLOYMENT_GROUP = "DeploymentGroup";
     public static final String VERSION = "Version";
     public static final String BUCKET_URL = "BucketURL";
     public static final String LOCAL_VER_DIR = "LocalVerDir";
 
     protected String mTarget;
+    protected String mDeploymentGroup;
     protected String mVersion;
     protected String mBucketURL;
     protected File mLocalVerDir;
 
     public String getTarget() {
         return mTarget;
+    }
+
+    public String getDeploymentGroup() {
+        return mDeploymentGroup;
     }
 
     public String getVersion() {
@@ -55,6 +65,10 @@ public abstract class AbstractParameters {
 
     protected boolean validateTarget() {
         return validate( TARGET, mTarget );
+    }
+
+    protected boolean validateDeploymentGroup() {
+        return validate( DEPLOYMENT_GROUP, mDeploymentGroup );
     }
 
     protected boolean validateLocalVerDir() {
@@ -114,14 +128,18 @@ public abstract class AbstractParameters {
     }
 
     protected void setVersion( String pVersion ) {
-        mVersion = validateTargetOrVersion( VERSION, pVersion );
+        mVersion = validateTargetOrVersionOrDeploymentGroup( VERSION, pVersion );
+    }
+
+    protected void setDeploymentGroup( String pDeploymentGroup ) {
+        mDeploymentGroup = validateTargetOrVersionOrDeploymentGroup( DEPLOYMENT_GROUP, pDeploymentGroup );
     }
 
     protected void setTarget( String pTarget ) {
-        mTarget = validateTargetOrVersion( TARGET, pTarget );
+        mTarget = validateTargetOrVersionOrDeploymentGroup( TARGET, pTarget );
     }
 
-    protected String validateTargetOrVersion( String pWhat, String pValue ) {
+    protected String validateTargetOrVersionOrDeploymentGroup( String pWhat, String pValue ) {
         pValue = Confirm.significant( pWhat, pValue );
         for ( int i = 0; i < pValue.length(); i++ ) {
             if ( !Characters.is7BitAlphaNumeric( pValue.charAt( i ) ) ) {
