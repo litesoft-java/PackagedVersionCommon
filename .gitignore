@@ -1,3 +1,4 @@
 *.class
 build
 out
+/PackagedVersionCommon.jar

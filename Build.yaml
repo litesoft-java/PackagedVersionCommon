@@ -1,10 +1,7 @@
-onejar: PromotePackagedVersion
+jar: PackagedVersionCommon
 
 dependencies:
-- ../LiteSoftAWS
-
-classpath:
-- ../LiteSoftServerUtils/libs|**.jar
+- ../LiteSoftServerUtils
 
 resources: 
 - LICENSE

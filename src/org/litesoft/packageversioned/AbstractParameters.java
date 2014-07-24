@@ -2,6 +2,7 @@ package org.litesoft.packageversioned;
 
 import org.litesoft.commonfoundation.base.*;
 import org.litesoft.commonfoundation.typeutils.*;
+import org.litesoft.commonfoundation.typeutils.gregorian.*;
 import org.litesoft.server.file.*;
 import org.litesoft.server.util.*;
 
@@ -15,9 +16,8 @@ import java.util.*;
  * <p/>
  * Some of the supported Arguments are (Keys for the Arguments):
  * - Target ("Target") e.g. "jre"
- * - DeploymentGroup ("DeploymentGroup") e.g. "Alpha"
- * - - - if there is no keyed reference AND no default from a file (depends on the App), THEN a non-Keyed will be expected.
- * - Version ("Version"), &
+ * - Version ("Version")
+ * - DeploymentGroup ("DeploymentGroup") e.g. "Alpha" (must be from the DeploymentGroupSet)
  * - Bucket ("BucketURL")
  * - - - Bucket URL to interact with - if there is no keyed reference AND no SystemProperty("BucketURL"), THEN a non-Keyed will be expected.
  * - LocalVerDir ("LocalVerDir")
@@ -25,6 +25,12 @@ import java.util.*;
  * <p/>
  * if each Argument key starts w/ a unique letter, the 'permutations' option is active.
  * Any non-keyed values are applied in the appropriate order (excess keyed entries are noted, excess non-keyed entries are an Error)
+ *
+ * DeploymentGroupSet (e.g. "Alpha") is a special "parameter" that is a file that lists the DeploymentGroup(s) in promotion order (one per line)
+ * which means that the first line is inherently the Publish to DeploymentGroup.  The location (& Name) of this "DeploymentGroupSet" file can be
+ * specified with either a Keyed parameter or a SystemProperty("DeploymentGroupSet").  If the location (& Name) of this "DeploymentGroupSet" file
+ * is NOT specified, then a file named "DeploymentGroupSet.txt" will be hunted for.  File hunting is simply looking in the current directory and
+ * then its ancestry (parent, grandparent, ...) until it is found (allows for specialization thru working-directory as sub-dirs).
  */
 public abstract class AbstractParameters {
 
@@ -127,6 +133,9 @@ public abstract class AbstractParameters {
     }
 
     protected void setVersion( String pVersion ) {
+        if ("!".equals( pVersion )) {
+            pVersion = Timestamps.createVersionFromNow();
+        }
         mVersion = validateTargetOrVersionOrDeploymentGroup( VERSION, pVersion );
     }
 
