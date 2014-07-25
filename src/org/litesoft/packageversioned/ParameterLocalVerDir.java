@@ -1,7 +1,6 @@
 package org.litesoft.packageversioned;
 
 import org.litesoft.commonfoundation.base.*;
-import org.litesoft.commonfoundation.typeutils.*;
 import org.litesoft.server.file.*;
 import org.litesoft.server.util.*;
 
@@ -35,8 +34,8 @@ public class ParameterLocalVerDir extends AbstractFileParameter {
     }
 
     @Override
-    protected File validateAndConvert( String pValue ) {
-        File zDirectory = super.validateAndConvert( pValue );
+    protected File convertValidated( String pValue ) {
+        File zDirectory = super.convertValidated( pValue );
         return mMustExist ?
                DirectoryUtils.assertExists( NAME, zDirectory ) :
                DirectoryUtils.ensureExistsAndMutable( NAME + " - Not Mutable: ", zDirectory );

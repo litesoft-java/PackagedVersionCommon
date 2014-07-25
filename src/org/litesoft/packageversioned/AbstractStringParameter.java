@@ -6,7 +6,7 @@ public abstract class AbstractStringParameter extends AbstractParameter<String> 
     }
 
     @Override
-    public final void set( String pValue ) {
-        mValue = validate( pValue );
+    protected String convertValidated( String pValue ) {
+        return pValue;
     }
 }

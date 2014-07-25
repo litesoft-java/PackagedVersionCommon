@@ -1,9 +1,8 @@
 package org.litesoft.packageversioned;
 
+import org.litesoft.commonfoundation.iterators.*;
 import org.litesoft.commonfoundation.typeutils.*;
-import org.litesoft.server.file.*;
 
-import java.io.*;
 import java.util.*;
 
 public class DeploymentGroupSet {
@@ -14,37 +13,31 @@ public class DeploymentGroupSet {
 
     private final List<String> mGroupNames = Lists.newArrayList();
 
-    public DeploymentGroupSet( String pFileName, String[] pFileLines ) {
-        for ( int i = 0; i < pFileLines.length; i++ ) {
-            String zLine = pFileLines[i] + "//"; // Comment
-            if ( !(zLine = zLine.substring( 0, zLine.indexOf( "//" ) ).trim()).isEmpty() ) {
-                if ( VALIDATOR.acceptable( zLine ) ) {
-                    mGroupNames.add( zLine );
-                } else {
-                    throw new IllegalArgumentException( "Line[" + i + "] from '" + pFileName + "' is not a valid DeploymentGroup: " + zLine );
-                }
+    public DeploymentGroupSet( CommentableFileLoader.Results pResults ) {
+        for ( DescriptiveIterator<String> zSource = pResults.iterator; zSource.hasNext(); ) {
+            String zLine = zSource.next();
+            if ( !acceptable( zLine ) ) {
+                throw new IllegalArgumentException(
+                        "Line[" + zSource + "] from '" + pResults.file.getAbsolutePath() + "' is not a valid DeploymentGroup: " + zLine );
             }
+            mGroupNames.add( zLine );
         }
         if ( mGroupNames.isEmpty() ) {
-            throw new IllegalArgumentException( "No DeploymentGroups found in: " + pFileName );
+            throw new IllegalArgumentException( "No DeploymentGroups found in: " + pResults.file.getAbsolutePath() );
         }
     }
 
-    public static DeploymentGroupSet get() {
-        File zFile = find( System.getProperty( NAME ) );
-        return new DeploymentGroupSet( zFile.getAbsolutePath(), FileUtils.loadTextFile( zFile ) );
+    private boolean acceptable( String pLine ) {
+        return VALIDATOR.acceptable( pLine );
     }
 
-    protected static File find( String pDeploymentGroupSetFileReference ) {
-        if ( pDeploymentGroupSetFileReference != null ) {
-            return FileUtils.assertFileExists( new File( pDeploymentGroupSetFileReference ) );
+    private static DeploymentGroupSet sInstance;
+
+    public static synchronized DeploymentGroupSet get() {
+        if ( sInstance == null ) {
+            sInstance = new DeploymentGroupSet( CommentableFileLoader.getFile( NAME, DEFAULT_DEPLOYMENT_GROUP_SET_FILENAME ) );
         }
-        File zFromDir = new File( FileUtils.currentWorkingDirectory() );
-        File zFile = DirectoryUtils.findAncestralFile( zFromDir, DEFAULT_DEPLOYMENT_GROUP_SET_FILENAME );
-        if ( zFile == null ) {
-            throw new IllegalStateException( "Unable to locate '" + DEFAULT_DEPLOYMENT_GROUP_SET_FILENAME + "' in ancestry of: " + zFromDir.getAbsolutePath() );
-        }
-        return zFile;
+        return sInstance;
     }
 
     public String first() {

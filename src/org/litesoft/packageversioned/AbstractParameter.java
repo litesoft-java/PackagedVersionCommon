@@ -22,6 +22,13 @@ public abstract class AbstractParameter<T> implements Parameter<T> {
     }
 
     @Override
+    public final void set( String pValue ) {
+        mValue = convertValidated( validate( pValue ) );
+    }
+
+    abstract protected T convertValidated( String pValue );
+
+    @Override
     public final T get() {
         return mValue;
     }
@@ -74,7 +81,7 @@ public abstract class AbstractParameter<T> implements Parameter<T> {
 
     @Override
     public void setIfNull( Supplier<T> pSupplier ) {
-        if (mValue == null) {
+        if ( mValue == null ) {
             mValue = pSupplier.get();
         }
     }

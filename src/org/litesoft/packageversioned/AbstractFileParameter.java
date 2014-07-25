@@ -10,16 +10,12 @@ public abstract class AbstractFileParameter extends AbstractParameter<File> {
     }
 
     @Override
-    public final void set( String pValue ) {
-        mValue = validateAndConvert( pValue );
+    protected File convertValidated( String pValue ) {
+        return new File( pValue );
     }
 
     @Override
     public boolean acceptable( String pValue ) {
         return (null != ConstrainTo.significantOrNull( pValue ));
-    }
-
-    protected File validateAndConvert( String pValue ) {
-        return new File( validate( pValue ) );
     }
 }
