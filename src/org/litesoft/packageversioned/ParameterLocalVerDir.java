@@ -3,40 +3,47 @@ package org.litesoft.packageversioned;
 import org.litesoft.commonfoundation.base.*;
 import org.litesoft.commonfoundation.typeutils.*;
 import org.litesoft.server.file.*;
-
-import java8.util.function.*;
+import org.litesoft.server.util.*;
 
 import java.io.*;
 
 /**
  * Parameter Argument: LocalVerDir ("LocalVerDir") - (where the "versioned" "target" dirs will live)
  * normally provided by a SystemProperty("LocalVerDir") but defaulting to "../versioned".
+ * Note: The LocalVerDir NEVER comes from the nonKeyed entries!
  */
 public class ParameterLocalVerDir extends AbstractFileParameter {
     public static final String NAME = "LocalVerDir";
-    public static final String INVALID = "MUST be an existing (or creatable) local directory";
 
-    public ParameterLocalVerDir() {
-        super( INVALID, NAME );
+    private static String createInvalid( boolean pMustExist ) {
+        return "MUST be an existing" + (pMustExist ? " " : " (or creatable) ") + "local directory";
     }
 
-    @Override
-    public boolean acceptable( String pValue ) {
-        return Characters.is7BitAlphaNumeric( (ConstrainTo.notNull( pValue ) + "-").charAt( 0 ) );
+    private final boolean mMustExist;
+
+    private ParameterLocalVerDir( boolean pMustExist ) {
+        super( createInvalid( pMustExist ), NAME );
+        mMustExist = pMustExist;
+    }
+
+    public static ParameterLocalVerDir existing() {
+        return new ParameterLocalVerDir( true );
+    }
+
+    public static ParameterLocalVerDir existingOrCreatable() {
+        return new ParameterLocalVerDir( false );
     }
 
     @Override
     protected File validateAndConvert( String pValue ) {
-        return DirectoryUtils.ensureExistsAndMutable( NAME + " - Not Mutable: ", super.validateAndConvert( pValue ) );
+        File zDirectory = super.validateAndConvert( pValue );
+        return mMustExist ?
+               DirectoryUtils.assertExists( NAME, zDirectory ) :
+               DirectoryUtils.ensureExistsAndMutable( NAME + " - Not Mutable: ", zDirectory );
     }
 
     @Override
-    protected Supplier<String> getDefaultSupplier() {
-        return new Supplier<String>() {
-            @Override
-            public String get() {
-                return ConstrainTo.significantOrNull( System.getProperty( NAME ), "../versioned" );
-            }
-        };
+    protected void populateFromNonKeyed( ArgsToMap pArgs ) {
+        set( ConstrainTo.significantOrNull( System.getProperty( NAME ), "../versioned" ) );
     }
 }

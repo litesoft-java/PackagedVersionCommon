@@ -10,7 +10,8 @@ import java.util.*;
  */
 public class ParameterTarget extends AbstractStringParameter {
     public static final String NAME = "Target";
-    public static final String INVALID = "MUST be all 7 Bit Alpha Numeric";
+
+    private static final String INVALID = "MUST be all 7 Bit Alpha Numeric";
 
     public ParameterTarget() {
         super( INVALID, NAME );

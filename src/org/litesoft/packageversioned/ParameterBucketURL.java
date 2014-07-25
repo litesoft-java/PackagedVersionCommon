@@ -10,7 +10,8 @@ import org.litesoft.server.util.*;
  */
 public class ParameterBucketURL extends AbstractStringParameter {
     public static final String NAME = "BucketURL";
-    public static final String INVALID = "MUST start with a 7 Bit Alpha Numeric character";
+
+    private static final String INVALID = "MUST start with a 7 Bit Alpha Numeric character";
 
     public ParameterBucketURL() {
         super( INVALID, NAME );

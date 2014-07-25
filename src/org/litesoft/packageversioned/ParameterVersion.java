@@ -8,7 +8,8 @@ import org.litesoft.commonfoundation.typeutils.gregorian.*;
  */
 public class ParameterVersion extends AbstractStringParameter {
     public static final String NAME = "Version";
-    public static final String INVALID = "MUST be all 7 Bit Alpha Numeric";
+
+    private static final String INVALID = "MUST be all 7 Bit Alpha Numeric";
 
     public ParameterVersion() {
         super( INVALID, NAME );

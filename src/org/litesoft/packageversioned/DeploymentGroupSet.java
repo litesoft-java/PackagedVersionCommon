@@ -1,6 +1,5 @@
 package org.litesoft.packageversioned;
 
-import org.litesoft.commonfoundation.base.*;
 import org.litesoft.commonfoundation.typeutils.*;
 import org.litesoft.server.file.*;
 
@@ -9,23 +8,31 @@ import java.util.*;
 
 public class DeploymentGroupSet {
     public static final String NAME = "DeploymentGroupSet";
-    public static final String DEFAULT_DEPLOYMENT_GROUP_SET_FILENAME = NAME+".txt";
+    public static final String DEFAULT_DEPLOYMENT_GROUP_SET_FILENAME = NAME + ".txt";
+
+    private static final ParameterDeploymentGroup VALIDATOR = new ParameterDeploymentGroup();
 
     private final List<String> mGroupNames = Lists.newArrayList();
 
-    public DeploymentGroupSet(String[] pFileLines) {
-        for ( String zLine : pFileLines ) {
-            if (null != (zLine = ConstrainTo.significantOrNull( zLine ))) {
-                if (!zLine.startsWith( "//" )) {
-                    // TODO: Validate...
+    public DeploymentGroupSet( String pFileName, String[] pFileLines ) {
+        for ( int i = 0; i < pFileLines.length; i++ ) {
+            String zLine = pFileLines[i] + "//"; // Comment
+            if ( !(zLine = zLine.substring( 0, zLine.indexOf( "//" ) ).trim()).isEmpty() ) {
+                if ( VALIDATOR.acceptable( zLine ) ) {
+                    mGroupNames.add( zLine );
+                } else {
+                    throw new IllegalArgumentException( "Line[" + i + "] from '" + pFileName + "' is not a valid DeploymentGroup: " + zLine );
                 }
             }
+        }
+        if ( mGroupNames.isEmpty() ) {
+            throw new IllegalArgumentException( "No DeploymentGroups found in: " + pFileName );
         }
     }
 
     public static DeploymentGroupSet get() {
         File zFile = find( System.getProperty( NAME ) );
-        return new DeploymentGroupSet( FileUtils.loadTextFile( zFile ) );
+        return new DeploymentGroupSet( zFile.getAbsolutePath(), FileUtils.loadTextFile( zFile ) );
     }
 
     protected static File find( String pDeploymentGroupSetFileReference ) {
@@ -41,6 +48,6 @@ public class DeploymentGroupSet {
     }
 
     public String first() {
-        return "Alpha"; // TODO: XXX
+        return mGroupNames.get( 0 );
     }
 }
