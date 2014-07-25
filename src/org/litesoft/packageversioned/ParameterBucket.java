@@ -76,4 +76,13 @@ public class ParameterBucket extends AbstractStringParameter {
         }
         throw new IllegalArgumentException( "No Endpoint defined for Bucket: " + pValue );
     }
+
+    public String getS3Endpoint() {
+        return mS3Endpoint;
+    }
+
+    @Override
+    public String toString() {
+        return get() + "." + getS3Endpoint();
+    }
 }
