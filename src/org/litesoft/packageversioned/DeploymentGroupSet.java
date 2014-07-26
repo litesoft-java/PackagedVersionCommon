@@ -43,4 +43,21 @@ public class DeploymentGroupSet {
     public String first() {
         return mGroupNames.get( 0 );
     }
+
+    public String previous( String pDeploymentGroup ) {
+        int zAt = mGroupNames.indexOf( pDeploymentGroup );
+        switch(zAt) {
+            case -1:
+                throw new IllegalArgumentException( "No Such Group: " + pDeploymentGroup );
+            case 0:
+                return null;
+            default:
+                return mGroupNames.get( zAt - 1 );
+        }
+    }
+
+    @Override
+    public String toString() {
+        return Lists.convertToString( mGroupNames );
+    }
 }
