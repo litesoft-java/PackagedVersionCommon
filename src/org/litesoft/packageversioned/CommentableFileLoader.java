@@ -28,11 +28,6 @@ public class CommentableFileLoader {
         if ( pSpecifiedFileReference != null ) {
             return FileUtils.assertFileExists( new File( pSpecifiedFileReference ) );
         }
-        File zFromDir = new File( FileUtils.currentWorkingDirectory() );
-        File zFile = DirectoryUtils.findAncestralFile( zFromDir, pDefaultAncestralFilename );
-        if ( zFile == null ) {
-            throw new IllegalStateException( "Unable to locate '" + pDefaultAncestralFilename + "' in ancestry of: " + zFromDir.getAbsolutePath() );
-        }
-        return zFile;
+        return new VersionedConfig.Finder( FileUtils.currentWorkingDirectory(), pDefaultAncestralFilename ).findRequired();
     }
 }

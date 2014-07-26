@@ -17,6 +17,17 @@ public abstract class AbstractParameter<T> implements Parameter<T> {
     }
 
     @Override
+    public final String toString() {
+        StringBuilder sb = new StringBuilder();
+        toString( sb );
+        return sb.toString();
+    }
+
+    protected void toString( StringBuilder sb ) {
+        sb.append( mValue );
+    }
+
+    @Override
     public final String[] getNames() {
         return mNames;
     }

@@ -16,6 +16,11 @@ public class ParameterVersion extends AbstractStringParameter {
     }
 
     @Override
+    protected void toString( StringBuilder sb ) {
+        sb.append( "vs '" ).append( mValue ).append( "'" );
+    }
+
+    @Override
     protected String normalize( String pValue ) {
         pValue = super.normalize( pValue );
         return "!".equals( pValue ) ? Timestamps.createVersionFromNow() : pValue;

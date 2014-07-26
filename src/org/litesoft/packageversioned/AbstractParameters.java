@@ -1,27 +1,47 @@
 package org.litesoft.packageversioned;
 
-import org.litesoft.server.file.*;
 import org.litesoft.server.util.*;
-
-import java.io.*;
 
 /**
  * Common Parameters support.
  * <p/>
- * Some of the supported Arguments are (Keys for the Arguments):
- * - DeploymentGroup ("DeploymentGroup") e.g. "Alpha" (must be from the DeploymentGroupSet)
- * -
- * <p/>
  * if each Argument key starts w/ a unique letter, the 'permutations' option is active.
  * Any non-keyed values are applied in the appropriate order (excess keyed entries are noted, excess non-keyed entries are an Error)
- * <p/>
- * DeploymentGroupSet (e.g. "Alpha") is a special "parameter" that is a file that lists the DeploymentGroup(s) in promotion order (one per line)
- * which means that the first line is inherently the Publish to DeploymentGroup.  The location (& Name) of this "DeploymentGroupSet" file can be
- * specified with either a Keyed parameter or a SystemProperty("DeploymentGroupSet").  If the location (& Name) of this "DeploymentGroupSet" file
- * is NOT specified, then a file named "DeploymentGroupSet.txt" will be hunted for.  File hunting is simply looking in the current directory and
- * then its ancestry (parent, grandparent, ...) until it is found (allows for specialization thru working-directory as sub-dirs).
  */
 public abstract class AbstractParameters {
+    protected ParameterTarget mTarget = new ParameterTarget();
+    protected ParameterVersion mVersion = new ParameterVersion();
+
+    private Object[] mToString;
+
+    protected void prepToString( Object... pToString ) {
+        mToString = pToString;
+    }
+
+    public final String getTarget() {
+        return mTarget.get();
+    }
+
+    protected String getVersion() {
+        return mVersion.get();
+    }
+
+    public final ParameterVersion getParameterVersion() {
+        return mVersion;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for ( Object zEntry : mToString ) {
+            if ( sb.length() != 0 ) {
+                sb.append( ' ' );
+            }
+            sb.append( zEntry.toString() );
+        }
+        return sb.toString();
+    }
+
     protected void populate( Parameter<?>[] pParameters, ArgsToMap pArgs ) {
         for ( Parameter<?> zParameter : pParameters ) {
             zParameter.populateFrom( pArgs );
@@ -30,7 +50,7 @@ public abstract class AbstractParameters {
 
     abstract public boolean validate();
 
-    public boolean validate( Parameter<?>[] pParameters ) {
+    protected boolean validate( Parameter<?>[] pParameters ) {
         boolean zValid = true;
         for ( Parameter<?> zParameter : pParameters ) {
             zValid &= zParameter.validate();

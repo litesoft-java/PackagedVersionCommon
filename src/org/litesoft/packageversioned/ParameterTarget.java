@@ -18,6 +18,11 @@ public class ParameterTarget extends AbstractStringParameter {
     }
 
     @Override
+    protected void toString( StringBuilder sb ) {
+        sb.append( "'" ).append( mValue ).append( "'" );
+    }
+
+    @Override
     public boolean acceptable( String pValue ) {
         return Strings.isAll7BitAlphaNumeric( pValue, 1 );
     }

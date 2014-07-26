@@ -20,6 +20,11 @@ public class ParameterBucket extends AbstractStringParameter {
     }
 
     @Override
+    protected void toString( StringBuilder sb ) {
+        sb.append( "(Bucket: " ).append( mValue ).append( "." ).append( mS3Endpoint ).append( ')' );
+    }
+
+    @Override
     public boolean acceptable( String pValue ) {
         pValue = ConstrainTo.significantOrNull( pValue, "" );
         return (3 <= pValue.length()) && (pValue.length() <= 63)
@@ -79,10 +84,5 @@ public class ParameterBucket extends AbstractStringParameter {
 
     public String getS3Endpoint() {
         return mS3Endpoint;
-    }
-
-    @Override
-    public String toString() {
-        return get() + "." + getS3Endpoint();
     }
 }
