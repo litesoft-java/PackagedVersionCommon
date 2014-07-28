@@ -50,7 +50,7 @@ public abstract class AbstractParameters {
 
     abstract public boolean validate();
 
-    protected boolean validate( Parameter<?>[] pParameters ) {
+    protected boolean validate( Parameter<?>... pParameters ) {
         boolean zValid = true;
         for ( Parameter<?> zParameter : pParameters ) {
             zValid &= zParameter.validate();

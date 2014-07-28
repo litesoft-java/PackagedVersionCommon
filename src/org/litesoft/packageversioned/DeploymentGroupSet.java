@@ -40,20 +40,30 @@ public class DeploymentGroupSet {
         return sInstance;
     }
 
+    public String assertMember( String pDeploymentGroup ) {
+        findRequired( pDeploymentGroup );
+        return pDeploymentGroup;
+    }
+
     public String first() {
         return mGroupNames.get( 0 );
     }
 
+    public String last() {
+        return mGroupNames.get( mGroupNames.size() - 1 );
+    }
+
     public String previous( String pDeploymentGroup ) {
+        int zAt = findRequired( pDeploymentGroup );
+        return (zAt == 0) ? null : mGroupNames.get( zAt - 1 );
+    }
+
+    private int findRequired( String pDeploymentGroup ) {
         int zAt = mGroupNames.indexOf( pDeploymentGroup );
-        switch(zAt) {
-            case -1:
-                throw new IllegalArgumentException( "No Such Group: " + pDeploymentGroup );
-            case 0:
-                return null;
-            default:
-                return mGroupNames.get( zAt - 1 );
+        if ( zAt == -1 ) {
+            throw new IllegalArgumentException( "No Such Group: " + pDeploymentGroup );
         }
+        return zAt;
     }
 
     @Override

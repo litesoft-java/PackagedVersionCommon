@@ -18,7 +18,7 @@ public abstract class AbstractApp<Parameters extends AbstractParameters> {
 
     public void run() {
         CONSOLE.indent();
-        CONSOLE.printLn( mAction, " ", mParameters );
+        reportWhat();
         CONSOLE.indent();
 
         process();
@@ -26,6 +26,16 @@ public abstract class AbstractApp<Parameters extends AbstractParameters> {
         CONSOLE.outdent();
         CONSOLE.outdent();
         CONSOLE.printLn( "Done!" );
+    }
+
+    protected void reportAgain() {
+        CONSOLE.outdent();
+        reportWhat();
+        CONSOLE.indent();
+    }
+
+    private void reportWhat() {
+        CONSOLE.printLn( mAction, " ", mParameters );
     }
 
     abstract protected void process();
